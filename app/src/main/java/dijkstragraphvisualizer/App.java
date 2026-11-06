@@ -4,18 +4,30 @@
 package dijkstragraphvisualizer;
 
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
+import javax.swing.BorderFactory;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.Border;
 
+import dijkstragraphvisualizer.core.Graph;
+import dijkstragraphvisualizer.core.ImageButton;
 import dijkstragraphvisualizer.core.Window;
 import dijkstragraphvisualizer.core.WindowInterface;
+import dijkstragraphvisualizer.renderer.DrawingPanel;
 import dijkstragraphvisualizer.utils.Colors;
 
 public class App {
+    private static boolean playSelected = false;
+    private static boolean stopSelected = false;
+    private static boolean pauseSelected = false;
+
     public static void main(String[] args) {
         try {
 		    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -24,13 +36,64 @@ public class App {
 		}
 
         WindowInterface window = new Window();
+        Graph graph = new Graph();
         
         JToolBar toolBar = new JToolBar();
 		toolBar.setLayout(new FlowLayout());
-		toolBar.setPreferredSize(new Dimension(toolBar.getWidth(), 45));
-		toolBar.setBackground(Colors.PALETTE_BLACK);
+        toolBar.setPreferredSize(new Dimension(0, 45));
+		toolBar.setBackground(Colors.PALETTE_DARK_GRAY);
 		toolBar.setOpaque(true);
 
+        Border border = BorderFactory.createMatteBorder(
+            0, 0, 1, 0,
+            Colors.PALETTE_LIGHT_DARK
+        );
+        toolBar.setBorder(border);
+
+        ImageButton playButton = new ImageButton("icons/PlayButton.png");
+        playButton.setRolloverEnabled(true);
+        playButton.setBorderPainted(false);
+        playButton.setPreferredSize(new Dimension(33, 33));
+        playButton.setBackground(Color.BLACK);
+        playButton.setFocusable(false);
+
+        ImageButton stopButton = new ImageButton("icons/StopButton.png");
+        stopButton.setRolloverEnabled(true);
+        stopButton.setBorderPainted(false);
+        stopButton.setPreferredSize(new Dimension(33, 33));
+        stopButton.setBackground(Color.BLACK);
+        stopButton.setFocusable(false);
+        stopButton.setVisible(false);
+
+        ImageButton pauseButton = new ImageButton("icons/PauseButton.png");
+        pauseButton.setRolloverEnabled(true);
+        pauseButton.setBorderPainted(false);
+        pauseButton.setPreferredSize(new Dimension(33, 33));
+        pauseButton.setBackground(Color.BLACK);
+        pauseButton.setFocusable(false);
+        pauseButton.setVisible(false);
+
+        playButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                playSelected = !playSelected;
+                pauseSelected = !pauseSelected;
+                stopSelected = !stopSelected;
+
+                playButton.setVisible(false);
+                pauseButton.setVisible(pauseSelected);
+                stopButton.setVisible(stopSelected);
+            }
+        });
+
+        toolBar.add(playButton);
+        toolBar.add(stopButton);
+        toolBar.add(pauseButton);
+
+        DrawingPanel drawingPanel = new DrawingPanel(graph);
+        drawingPanel.setBackground(Colors.PALETTE_DARK_GRAY);
+        
+        window.add(drawingPanel);
         window.addContentPane(toolBar, BorderLayout.NORTH);
         window.show();
     }

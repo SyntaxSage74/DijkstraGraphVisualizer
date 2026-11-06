@@ -24,5 +24,12 @@ public class Window implements WindowInterface {
     public void addContentPane(Component component, String layout) {
         frame.getContentPane().add(component, layout);
     }
+
+    @Override
+    public void add(Component... components) {
+        for(Component component : components) {
+            frame.add(component);
+        }
+    }
     
 }
